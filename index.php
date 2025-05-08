@@ -4,12 +4,12 @@ require 'vendor/autoload.php'; // Asegurate de que este camino sea correcto
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$server = "192.168.0.119";
+$server = "XXX.168.0.XXX";
 
 $connectionOptions = [
-    "Database" => "FLETCO", // Cambia esto por el nombre de tu base de datos
+    "Database" => "XXETXX", // Cambia esto por el nombre de tu base de datos
     "Uid" => "sa", // Cambia esto por tu usuario de SQL Server
-    "PWD" => "hlIcWGTZo5" // Cambia esto por tu contraseña de SQL Server
+    "PWD" => "*********" // Cambia esto por tu contraseña de SQL Server
 ];
 
 $conn = sqlsrv_connect($server, $connectionOptions);

@@ -2,10 +2,10 @@
 require 'vendor/autoload.php'; // Asegurate de que este camino sea correcto
 
 // Configuración base de datos
-$server = "192.168.0.119";
-// $database = "IFLOW2";
+$server = "xxx.168.0.xxx";
+// $database = "xxLOxx";
 // $username = "sa";
-// $password = "hlIcWGTZo5";
+// $password = "*******";
 
 // Conexión SQL Server
 // $connectionOptions = [
@@ -16,9 +16,9 @@ $server = "192.168.0.119";
 
 // Conexión SQL Server
 $connectionOptions = [
-    "Database" => "IFLOW2",
+    "Database" => "xxLOx",
     "Uid" => "sa",
-    "PWD" => "hlIcWGTZo5"
+    "PWD" => "*******"
 ];
 
 

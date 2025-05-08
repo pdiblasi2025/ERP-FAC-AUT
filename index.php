@@ -7,9 +7,9 @@ use PHPMailer\PHPMailer\Exception;
 $server = "192.168.0.119";
 
 $connectionOptions = [
-    "Database" => "FLETCO",
-    "Uid" => "sa",
-    "PWD" => "hlIcWGTZo5"
+    "Database" => "FLETCO", // Cambia esto por el nombre de tu base de datos
+    "Uid" => "sa", // Cambia esto por tu usuario de SQL Server
+    "PWD" => "hlIcWGTZo5" // Cambia esto por tu contraseña de SQL Server
 ];
 
 $conn = sqlsrv_connect($server, $connectionOptions);
@@ -19,7 +19,7 @@ if (!$conn) {
 }
 
 // Limpia la tabla USR_PROSS_FACAUT antes de insertar nuevos registros
-$TruncateSql = "DELETE USR_PROSS_FACAUT";
+$TruncateSql = "DELETE USR_PROSS_FACAUT"; 
 
     
 $TruncateStmt = sqlsrv_query($conn, $TruncateSql);
@@ -30,7 +30,7 @@ $TruncateStmt = sqlsrv_query($conn, $TruncateSql);
                             print_r(sqlsrv_errors());
                         }                    
                    
-//exit;
+
 // Buscar registros
 $sql = "SELECT 
         H.SAR_FCRMVH_IDENTI,
@@ -114,7 +114,7 @@ $stmt = sqlsrv_query($conn, $sql);
        
             }
 
-exit;
+
 // Hasta aca tengo todos las facturas que tengo que procesar y evaluar.
 // Marco las facturas que no superan los monto maxino declarado por ARCA.
 

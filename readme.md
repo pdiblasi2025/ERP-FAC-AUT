@@ -22,7 +22,7 @@
             
 
 
-* 2do busco los en mi tabla de usuario **(USR_PROSS_FACAUT)** los registros cuyo valor Total se menores o igual a  1357480
+* 2do busco los en mi tabla de usuario **(USR_PROSS_FACAUT)** los registros cuyo valor Total se menores o igual a  3958316
     y marco el campo USR_PADRON en "N"
 
 * 3ero Busco los **VTMCLH_NRODOC** de la tabla **USR_PROSS_FACAUT QUE NO TENGA UNA 'N'** EN EL CAMPO **USR_PADRON** en la tabla  **SAR_VTTFC1** Y verifico que el campo **SAR_VT_DEBAJA** sea igual a "N" , en ese caso marco el campo **USR_PADRON** en "N" en la tabla **USR_PROSS_FACAUT**
@@ -48,7 +48,8 @@ SAR_FCRMVH colocando el campo **SAR_FCRMVH_STATUS** en "N" para que las facturas
 * 8vo Si todo fue ejecutado sin errores hago un DROP de la tabla  USR_PROSS_FACAUT para que quede limpia para la proxima corrida del proceso.
 
 
-
+* link acrca : 
+https://servicioscf.afip.gob.ar/FCEServicioConsulta/api/fceconsulta.aspx/getGrandesEmpresas
 
 
 

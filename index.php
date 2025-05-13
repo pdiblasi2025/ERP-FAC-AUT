@@ -1,16 +1,24 @@
 <?php
 require 'vendor/autoload.php'; // Asegurate de que este camino sea correcto
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require_once 'db_conf.php'; // Asegurate de que este camino sea correcto
+require_once 'arca.php'; // Asegurate de que este camino sea correcto
 
 $server = "192.168.0.119";
 
 $connectionOptions = [
-    "Database" => "FLETCO", // Cambia esto por el nombre de tu base de datos
-    "Uid" => "sa", // Cambia esto por tu usuario de SQL Server
-    "PWD" => "hlIcWGTZo5" // Cambia esto por tu contraseña de SQL Server
+    "Database" => "IFLOW2", // Cambia esto por el nombre de tu base de datos
+    "Uid" => "sa",          // Cambia esto por tu usuario de SQL Server
+    "PWD" => "hlIcWGTZo5"   // Cambia esto por tu contraseña de SQL Server
 ];
+
+$obj1 = new Arca();
+$obj1->DeleteArcaPadron();
+
+$obj2 = new Arca();
+$obj2->GetArcaPadron();                    
+
+
+exit;
 
 $conn = sqlsrv_connect($server, $connectionOptions);
 
@@ -21,6 +29,7 @@ if (!$conn) {
 // Limpia la tabla USR_PROSS_FACAUT antes de insertar nuevos registros
 $TruncateSql = "DELETE USR_PROSS_FACAUT"; 
 
+
     
 $TruncateStmt = sqlsrv_query($conn, $TruncateSql);
                         if ($TruncateStmt) {
@@ -30,6 +39,7 @@ $TruncateStmt = sqlsrv_query($conn, $TruncateSql);
                             print_r(sqlsrv_errors());
                         }                    
                    
+   
 
 // Buscar registros
 $sql = "SELECT 
@@ -40,7 +50,7 @@ $sql = "SELECT
         FROM SAR_FCRMVH AS H
         JOIN SAR_FCRMVI AS I ON I.SAR_FCRMVI_IDENTI = H.SAR_FCRMVH_IDENTI
         JOIN VTMCLH AS V ON H.SAR_FCRMVH_NROCTA = V.VTMCLH_NROCTA
-        WHERE H.SAR_FCRMVH_STATUS IN ('W', 'X')
+        WHERE H.SAR_FCRMVH_STATUS IN ('X')  /*('Z',W', 'X')*/
         GROUP BY 
             H.SAR_FCRMVH_IDENTI, 
             H.SAR_FCRMVH_NROCTA, 
@@ -115,19 +125,19 @@ $stmt = sqlsrv_query($conn, $sql);
             }
 
 
-// Hasta aca tengo todos las facturas que tengo que procesar y evaluar.
+
 // Marco las facturas que no superan los monto maxino declarado por ARCA.
 
 $updateSql = "UPDATE USR_PROSS_FACAUT
                  SET USR_PADRON = 'N'
-               WHERE TOTAL <= 1357480";
+               WHERE TOTAL <= 3958316"; 
 
 $updateStmt = sqlsrv_query($conn, $updateSql);
 
                     if ($updateStmt) {
-                        echo "UPDATE N EJECUTADO:\n";
+                        echo "Montos Mayores EJECUTADO:\n";
                     } else {
-                        echo "Error al ejecutar consulta:\n";
+                        echo "Error al ejecutar consulta de Montos Mayores\n";
                         print_r(sqlsrv_errors());
                     }
 
@@ -135,7 +145,7 @@ $updateStmt = sqlsrv_query($conn, $updateSql);
 
 $update2Sql = "UPDATE USR_PROSS_FACAUT
                 SET USR_PADRON = 'N'
-                WHERE VTMCLH_NRODOC NOT IN (SELECT SAR_VTTFC1_VTTCUI FROM SAR_VTTFC1)
+                WHERE VTMCLH_NRODOC NOT IN (SELECT ARCA_CUIT FROM USR_PADRON_ARCA)
                 AND USR_PADRON IS NULL"; //no estan el el padron
 
 $update2Stmt = sqlsrv_query($conn, $update2Sql);
@@ -147,29 +157,11 @@ $update2Stmt = sqlsrv_query($conn, $update2Sql);
                         print_r(sqlsrv_errors());
                     }
 
-
-
-// Dados de baja en el padron.
-
-$update3Sql = "UPDATE USR_PROSS_FACAUT
-                SET USR_PADRON = 'N'
-                WHERE VTMCLH_NRODOC in (SELECT SAR_VTTFC1_VTTCUI FROM SAR_VTTFC1 WHERE SAR_VT_DEBAJA = 'S') 
-                AND USR_PADRON IS NULL"; // Estan en el padron pero dados de baja.
-
-$update3Stmt = sqlsrv_query($conn, $update3Sql);
-
-                    if ($update3Stmt) {
-                        echo "UPDATE B EJECUTADO:\n";
-                    } else {
-                        echo "Error al ejecutar consulta:\n";
-                        print_r(sqlsrv_errors());
-                    }
-
 // Activos en el padron.
     
 $update4Sql = "UPDATE USR_PROSS_FACAUT
                 SET USR_PADRON = 'P'
-                WHERE VTMCLH_NRODOC in (SELECT SAR_VTTFC1_VTTCUI FROM SAR_VTTFC1 WHERE SAR_VT_DEBAJA = 'N') 
+                WHERE VTMCLH_NRODOC in (SELECT ARCA_CUIT FROM USR_PADRON_ARCA) 
                 AND USR_PADRON IS NULL";
 
 $update4Stmt = sqlsrv_query($conn, $update4Sql);
@@ -183,15 +175,6 @@ $update4Stmt = sqlsrv_query($conn, $update4Sql);
 
 // Aca debo iniciar los cambios en la tabla SAR_FCRMVH_STATUS para marcar las facturas como listas a procesar procesadas.
 
-/**
-UPDATE SAR_FCRMVH
-SET SAR_FCRMVH_STATUS = 'N'
-FROM SAR_FCRMVH FCRMVH
-INNER JOIN USR_PROSS_FACAUT FACAUT 
-    ON FCRMVH.SAR_FCRMVH_IDENTI = FACAUT.SAR_FCRMVH_IDENTI
-    AND FCRMVH.SAR_FCRMVH_NROCTA = FACAUT.SAR_FCRMVH_NROCTA
-WHERE FACAUT.USR_PADRON = 'N';
- */
 $update5Sql = "UPDATE SAR_FCRMVH
                 SET SAR_FCRMVH_STATUS = 'N'
                 FROM SAR_FCRMVH FCRMVH
@@ -208,23 +191,11 @@ $update5Stmt = sqlsrv_query($conn, $update5Sql);
                         print_r(sqlsrv_errors());
                     }
 
-/*
-UPDATE SAR_FCRMVH
-SET SAR_FCRMVH_CIRCOM = 0410,
-    SAR_FCRMVH_CIRAPL = 0410,
-    USR_SAR_VIRT_TIPDOP = 27,
-    USR_SAR_VIRT_VALDOP = SCA,
-    SAR_FCRMVH_STATUS = "N"
-FROM SAR_FCRMVH FCRMVH
-INNER JOIN USR_PROSS_FACAUT FACAUT 
-    ON FCRMVH.SAR_FCRMVH_IDENTI = FACAUT.SAR_FCRMVH_IDENTI
-    AND FCRMVH.SAR_FCRMVH_NROCTA = FACAUT.SAR_FCRMVH_NROCTA
-WHERE FACAUT.USR_PADRON = 'N';
-*/
+
 $update6Sql = "UPDATE SAR_FCRMVH
-                SET SAR_FCRMVH_CIRCOM = 0410,
-                    SAR_FCRMVH_CIRAPL = 0410,
-                    USR_SAR_VIRT_TIPDOP = 27,
+                SET SAR_FCRMVH_CIRCOM = '0410',
+                    SAR_FCRMVH_CIRAPL = '0410',
+                    USR_SAR_VIRT_TIPDOP = '27',
                     USR_SAR_VIRT_VALDOP = 'SCA',
                     SAR_FCRMVH_STATUS = 'N'
                 FROM SAR_FCRMVH FCRMVH

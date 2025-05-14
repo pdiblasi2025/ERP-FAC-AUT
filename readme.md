@@ -48,8 +48,16 @@ SAR_FCRMVH colocando el campo **SAR_FCRMVH_STATUS** en "N" para que las facturas
 * 8vo Si todo fue ejecutado sin errores hago un DROP de la tabla  USR_PROSS_FACAUT para que quede limpia para la proxima corrida del proceso.
 
 
+**DATOS GENERALES**
+
 * link acrca : 
 https://servicioscf.afip.gob.ar/FCEServicioConsulta/api/fceconsulta.aspx/getGrandesEmpresas
+
+* Ejecutable de proceso = *pro_fac_ecom_aut.bat*  el mismo debe estar en el directorio de instalacion del desarrollo = *C:\PSD_PROCESOS\ERP-FACT-AUT\ERP-FACT-AUT*
+
+
+
+
 
 
 

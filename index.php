@@ -6,7 +6,7 @@ require_once 'arca.php'; // Asegurate de que este camino sea correcto
 $server = "192.168.0.119";
 
 $connectionOptions = [
-    "Database" => "IFLOW2", // Cambia esto por el nombre de tu base de datos
+    "Database" => "IFLOW", // Cambia esto por el nombre de tu base de datos
     "Uid" => "sa",          // Cambia esto por tu usuario de SQL Server
     "PWD" => "hlIcWGTZo5"   // Cambia esto por tu contraseña de SQL Server
 ];
@@ -17,8 +17,6 @@ $obj1->DeleteArcaPadron();
 $obj2 = new Arca();
 $obj2->GetArcaPadron();                    
 
-
-exit;
 
 $conn = sqlsrv_connect($server, $connectionOptions);
 
